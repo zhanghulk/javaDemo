@@ -1,0 +1,153 @@
+InputStreamReader和BufferedReader用法及真实案例
+一、BufferedReader类
+
+.所属类库：
+         java.lang.Object 
+              java.io.Reader 
+                         java.io.BufferedReader
+.基本概念：
+           public class BufferedReader   extends Reader
+从字符输入流中读取文本，缓冲各个字符，从而实现字符、数组和行的高效读取。 可以指定缓冲区的大小，或者可使用默认的大小。大多数情况下，默认值足够大。
+通常，Reader 所作的每个读取请求都会导致对底层字符或字节流进行相应的读取请求。因此，建议用 BufferedReader包装所有其 read() 操作可能开销很高的 Reader（如 FileReader和 InputStreamReader）。
+BufferedReader流能够读取文本行,通过向BufferedReader传递一个Reader对象,来创建一个BufferedReader对象,之所以这样做是因为FileReader没有提供读取文本行的功能.
+
+.Demo：
+通过Bufferedreader捕获所输入的语句 ：
+ 
+Java代码  收藏代码
+
+        import java.io.*;  
+    lass BufferedReaderDemo{  
+    public static void main(String[] args)throws IOException {   
+        BufferedReader bufferedReader =new BufferedReader(  
+                new InputStreamReader(System.in));  
+      
+        System.out.print("请输入一系列文字，可包括空格：");   
+        String text =bufferedReader.readLine();   
+        System.out.println("请输入文字："+text);  
+    }   
+ 
+注解：
+
+ 
+throws IOException  抛出异常
+
+InputStreamReader是字节流通向字符流的桥梁
+ 
+二、InputStreamReader类
+
+InputStreamReader 将字节流转换为字符流。是字节流通向字符流的桥梁。如果不指定字符集编码，该解码过程将使用平台默认的字符编码，如：GBK。
+
+构造方法：
+
+    InputStreamReader isr = new InputStreamReader(InputStream in);//构造一个默认编码集的InputStreamReader类
+
+    InputStreamReader isr = new InputStreamReader(InputStream in,String charsetName);//构造一个指定编码集的InputStreamReader类。
+   
+    参数 in对象通过 InputStream in = System.in;获得。//读取键盘上的数据。
+
+    或者 InputStream in = new FileInputStream(String fileName);//读取文件中的数据。可以看出 FileInputStream 为InputStream的子类。
+
+主要方法：int read();//读取单个字符。
+                 int read(char []cbuf);//将读取到的字符存到数组中。返回读取的字符数。
+
+.Demo：
+Java代码  收藏代码
+
+    import java.io.*;  
+    class InputStreamReaderDemo {  
+        public static void transReadNoBuf() throws IOException {  
+            /** 
+             * 没有缓冲区，只能使用read()方法。 
+             */  
+            //读取字节流  
+            //InputStream in = System.in;//读取键盘的输入。  
+            InputStream in = new FileInputStream("D:\\demo.txt");//读取文件的数据。  
+            //将字节流向字符流的转换。要启用从字节到字符的有效转换，  
+            //可以提前从底层流读取更多的字节.  
+            InputStreamReader isr = new InputStreamReader(in);//读取  
+            //综合到一句。  
+            //InputStreamReader isr = new InputStreamReader(  
+            //new FileInputStream("D:\\demo.txt"));  
+                  
+            char []cha = new char[1024];  
+            int len = isr.read(cha);  
+            System.out.println(new String(cha,0,len));  
+            isr.close();  
+      
+        }  
+        public static void transReadByBuf() throws IOException {  
+            /** 
+             * 使用缓冲区 可以使用缓冲区对象的 read() 和  readLine()方法。 
+             */  
+            //读取字节流  
+            //InputStream in = System.in;//读取键盘上的数据  
+            InputStream in = new FileInputStream("D:\\demo.txt");//读取文件上的数据。  
+            //将字节流向字符流的转换。  
+            InputStreamReader isr = new InputStreamReader(in);//读取  
+            //创建字符流缓冲区  
+            BufferedReader bufr = new BufferedReader(isr);//缓冲  
+            //BufferedReader bufr = new BufferedReader(  
+            //new InputStreamReader(new FileInputStream("D:\\demo.txt")));可以综合到一句。  
+            /*int ch =0; 
+            ch = bufr.read(); 
+            System.out.println((char)ch); 
+            */  
+            String line;  
+            while((line = bufr.readLine())!=null){  
+                System.out.println(line);  
+            }  
+            isr.close();  
+        }  
+    }  
+
+ 
+三、InputStreamReader、BufferedReader真实案例（非编码集）
+Java代码  收藏代码
+
+    import java.io.*;  
+    class UtilResource {  
+        private void initializeResource() {  
+            try {  
+      
+                //读取文件，并且以utf-8的形式写出去  
+                BufferedReader bufread;  
+                String read;  
+                bufread = new BufferedReader(new InputStreamReader(ResourceHelper  
+                        .getResourceInputStream("pinyin.txt")));  
+                while ((read = bufread.readLine()) != null) {  
+                    System.out.println(read);  
+                }  
+                bufread.close();  
+            } catch (FileNotFoundException ex) {  
+                ex.printStackTrace();  
+            } catch (IOException ex) {  
+                ex.printStackTrace();  
+            }  
+        }  
+    }  
+
+注：其中 pinyin.txt 放于项目的根目录下
+
+ 
+Java代码  收藏代码
+
+    import java.io.BufferedInputStream;  
+    import java.io.FileInputStream;  
+    import java.io.FileNotFoundException;  
+    class ResourceHelper {  
+        /** 
+         * @param resourceName 
+         * @return  
+         * @return  
+         */  
+        static BufferedInputStream getResourceInputStream(String resourceName) {  
+            try {  
+                return new BufferedInputStream(new FileInputStream(resourceName));  
+            } catch (FileNotFoundException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();  
+            }  
+            return null;  
+        }  
+    }  
