@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,24 +35,43 @@ public class GsonTest {
 		System.out.println("转换成为的user2==" + user2);
 		System.out.println();
 
-		System.out.println("2    Collection集合的转换**************************");
-		System.out.println("将一个Bean的List集合转换成为json字符串->");
+		//List Set都实现了Collection, 均可使用
+		System.out.println("2    Collection列表的转换**************************");
+		System.out.println("将一个Bean的List列表转换成为json字符串->");
 		Collection<User> userList1 = new ArrayList<User>();
 		for (int i = 0; i < 3; i++) {
 			User user = new User("如花" + i, 10 + i, new StringBuffer("男"), false);
 			userList1.add(user);
 		}
 		json = gson.toJson(userList1);
-		System.out.println("User的List集合对象转换成为Json字符串，json===" + json);
+		System.out.println("User的List对象转换成为Json字符串，json===" + json);
 
 		System.out.println("***************************");
 		System.out.println("将一个json字符串转换成为Bean的List集合->");
 		Collection<User> userList2 = gson.fromJson(json, new TypeToken<Collection<User>>() {
 		}.getType());
-		System.out.println("转换成为的User的List集合，userList2=" + userList2);
+		System.out.println("转换成为的User的List列表，userList2=" + userList2);
+		System.out.println();
+		
+		System.out.println("3    Set集合的转换**************************");
+		System.out.println("将一个Bean的Set集合转换成为json字符串->");
+		Set<User> userSet = new HashSet<User>();
+		for (int i = 0; i < 3; i++) {
+			User user = new User("伯虎" + i, 10 + i, new StringBuffer("女"), false);
+			userSet.add(user);
+		}
+		json = gson.toJson(userList1);
+		System.out.println("User的Set集合对象转换成为Json字符串，json===" + json);
+
+		System.out.println("***************************");
+		System.out.println("将一个json字符串转换成为Bean的Set集合->");
+		Set<User> userSet2 = gson.fromJson(json, new TypeToken<Set<User>>() {
+		}.getType());
+		System.out.println("转换成为的User的Set集合，userSet2=" + userSet2);
 		System.out.println();
 
-		System.out.println("3   Array数组的转换**************************");
+		
+		System.out.println("4   Array数组的转换**************************");
 		System.out.println("将一个Bean的Array数组转换成为json字符串->");
 		User[] userArray1 = new User[3];
 		for (int i = 0; i < userArray1.length; i++) {
@@ -66,7 +87,7 @@ public class GsonTest {
 		System.out.println("转换成为的User的数组对象,userArray2=" + Arrays.toString(userArray2));
 		System.out.println();
 
-		System.out.println("4    Map的转换**************************");
+		System.out.println("5    Map的转换**************************");
 		System.out.println("将一个Bean的Map转换成为json字符串->");
 		Map<String, User> map1 = new HashMap<String, User>();
 		for (int i = 0; i < 3; i++) {
@@ -76,7 +97,7 @@ public class GsonTest {
 		System.out.println("User的Map集合转换成为Json字符串,json===" + json);
 
 		System.out.println("***************************");
-		System.out.println("将一个json字符串转换成为Bean的数组对象->");
+		System.out.println("将一个json字符串转换成为Bean的Map对象->");
 		Map<String, User> map2 = gson.fromJson(json, new TypeToken<Map<String, User>>() {
 		}.getType());
 		System.out.println("转换成为的User的数组对象，map2==" + map2);
