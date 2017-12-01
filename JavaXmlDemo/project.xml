@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--   Copyright 260.hulk.com  -->
+<projectDescription>
+  <name>MemberManagement</name>
+  <comment>ha ha ha ha ha ha</comment>
+  <projects>
+    <project>PRJ1</project>
+    <project>PRJ2</project>
+    <project>PRJ3</project>
+    <project>PRJ4</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments> no arguments </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature><![CDATA[org.eclipse.jdt.core.javanature 111]]></nature>
+  </natures>
+</projectDescription>

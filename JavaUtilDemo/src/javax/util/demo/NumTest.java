@@ -11,8 +11,13 @@ public class NumTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//System.out.println(gcd(20, 15));
-	    mFlags |= FLAG_SMART_FORWARD_3;
+		double n = 0.000000;
+		System.out.println(n == 0);
+	    
+	}
+	
+	private void displaceTest() {
+		mFlags |= FLAG_SMART_FORWARD_3;
 	    mFlags |= FLAG_SMART_FORWARD_4;
 	    System.out.println((mFlags & FLAG_SMART_FORWARD_3) != 0);
 	    mFlags &= ~FLAG_SMART_FORWARD_3;
