@@ -1,5 +1,6 @@
 package com.gson;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 /**
  * Java 开发中Gson实现自定义类型(User)、java标准类型（集合、数组、列表、map等）对象之间的相互装换
@@ -18,9 +20,10 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 public class GsonTest {
+	static Gson gson = new Gson();
 	public static void main(String[] args) {
 		System.out.println("Java 开发中Gson实现自定义类型(User)、java标准类型（集合、数组、列表、map等）对象之间的相互装换**************************");
-		Gson gson = new Gson();
+		
 
 		System.out.println("1    普通的Bean的转换**************************");
 		System.out.println("将一个Bean转换成为json字符串->");
@@ -48,9 +51,17 @@ public class GsonTest {
 
 		System.out.println("***************************");
 		System.out.println("将一个json字符串转换成为Bean的List集合->");
-		Collection<User> userList2 = gson.fromJson(json, new TypeToken<Collection<User>>() {
-		}.getType());
+		java.lang.reflect.Type type = new TypeToken<List<User>>() {
+		}.getType();
+		List<User> userList2 = gson.fromJson(json, type);
 		System.out.println("转换成为的User的List列表，userList2=" + userList2);
+		System.out.println();
+		
+		System.out.println("***************************");
+		System.out.println("将一个json字符串转换成为Bean的Collection集合->");
+		Collection<User> userList3 = gson.fromJson(json, new TypeToken<Collection<User>>() {
+		}.getType());
+		System.out.println("转换成为的User的Collection列表，userList3=" + userList3);
 		System.out.println();
 		
 		System.out.println("3    Set集合的转换**************************");

@@ -1,5 +1,6 @@
 package javax.util.demo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +17,26 @@ public class StringTest {
      */
     public static void main(String[] args) {
     	//testTextEquels();
-    	testSubString();
+    	//testSubString();
+    	//compareTo();
+    	String s1 = new String("aaa");
+    	String s2 = new String("aaa");
+    	System.out.println(s1 == s1);
+    	
+    	System.out.println("ssssdsd".length());
+    	System.out.println( "æˆ‘æ˜¯å¸å·ç¨‹åºå‘˜é¡¶é¡¶é¡¶çš„æœ".length());
+    	System.out.println(("ssssdsdaaaasfdsdDD".length() * 2 ) / 3);
+    	
+    	System.out.println("abc".getBytes().length * 3);
+    	System.out.println("ç¨‹åºå‘˜".getBytes().length);
+    }
+    
+    private static void compareTo() {
+    	File f1 = new File("/logs/20180117_1511.txt");
+    	File f2 = new File("/logs/20180117_1512.txt");
+    	System.out.println(f1.compareTo(f2));
+    	System.out.println(f1.getName());
+    	System.out.println(f1.getName().compareTo(f2.getName()));
     }
     
     private static void testSubString() {
@@ -27,10 +47,10 @@ public class StringTest {
     
     private static void testTextEquels() {
     	String text = new String("SUCCESS");
-    	testTextEquels(text); //false, new Ò»¸öString¶ÔÏó
+    	testTextEquels(text); //false, new Ò»ï¿½ï¿½Stringï¿½ï¿½ï¿½ï¿½
     	
     	String text2 = "SUCCESS";
-    	testTextEquels(text2);//true , Ö±½Ó³öÈëÒ»ºĞString³£Á¿
+    	testTextEquels(text2);//true , Ö±ï¿½Ó³ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Stringï¿½ï¿½ï¿½ï¿½
 	}
     
     private static void testTextEquels(String text) {
