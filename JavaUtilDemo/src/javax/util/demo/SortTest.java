@@ -11,6 +11,20 @@ public class SortTest {
 		System.out.println(Arrays.toString(array));
 	}
 
+	/**
+	 * 递归实现快速排序法：　
+	 * 以一个值为基准值（通常第一个），把数组分成两部分：　前面部分的值都比基准值小，　后面部分的值都比基准值大．
+	 * １.每一次递归循环以第一个值为分界点,
+	 * (1)．先从后面开始检索，值比基准值大就略过，比之小就把此值移到左边指针位置
+	 * (2)．再从前面开始检索，值比基准值小就略过，比之大就把此值移到当前的右指针位置
+	 * 如果左指针比右指针小，继续循环１和２，直到分界点左边的值较小，右边的之较大, 最后把基准值赋值给当前的左指针位置.
+	 * 完成一次递归排序, 数组被分割成两个字子数组
+	 * 开始递归：
+	 * 分别对前后两个子数组进行１过程，直至数组被分割成若干个只有一个元素的子数组，整个数组快速排序完成．
+	 * @param array　需要排序的子数组(第一次为原数组)
+	 * @param startIndex　开始指针
+	 * @param endIndex　结束指针
+	 */
 	private static void quickSort(int[] array, int startIndex, int endIndex) {
 		if(startIndex >= endIndex) {
 			//递归结束点：　当左右相等或者左大于右时结束函数
@@ -35,26 +49,26 @@ public class SortTest {
 	 */
 	private static int boundary(int[] array, int startIndex, int endIndex) {
 		int standard = array[startIndex];//取第一个值为基准值
-		int leftIndex = startIndex;//左指针
-		int rightIndex = endIndex;//右指针
+		int leftIndex = startIndex;//左边界指针
+		int rightIndex = endIndex;//右边界指针
 		
 		//交换leftIndex和rightIndex的值
 		while(leftIndex < rightIndex) {
 			//从后面开始往前搜索
 			while(leftIndex < rightIndex && array[rightIndex] >= standard) {
-				//发现值比基准值大就略过
+				//当前值比基准值大就略过
 				rightIndex--;
 			}
-			//后面的值比基准值小，把这个值移到最前面的leftIndex位置，rightIndex的位置成为＂空＂
+			//发现后面的值比基准值小，把这个值移到最前面的leftIndex位置，rightIndex的位置成为＂空＂
 			array[leftIndex] = array[rightIndex];
 			System.out.println(Arrays.toString(array) + " rightIndex = " + rightIndex + ", leftIndex= " + leftIndex);
 			
 			//前面开始检索
 			while(leftIndex < rightIndex && array[leftIndex] <= standard) {
-				//发现值比基准值小就略过
+				//当前值比基准值小就略过
 				leftIndex++;
 			}
-			//前面的值比基准值大，就把这个值移到rightIndex位置，　leftIndex的位置成为＂空＂
+			//发现前面的值比基准值大，就把这个值移到rightIndex位置，　leftIndex的位置成为＂空＂
 			array[rightIndex] = array[leftIndex];
 			System.out.println(Arrays.toString(array) + " leftIndex = " + leftIndex + ", rightIndex= " + rightIndex);
 		}
