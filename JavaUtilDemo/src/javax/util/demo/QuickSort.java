@@ -2,13 +2,13 @@ package javax.util.demo;
 
 import java.util.Arrays;
 
-public class SortTest {
+public class QuickSort {
 
-	static int[] array = {7, 3, 6, 9, 2, 5, 8, 12, 23, 4, 1, 54};
+	static int[] ARRAY_TEST = {7, 3, 6, 9, 2, 5, 8, 12, 23, 4, 1, 54};
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString(array));
-		quickSort(array, 0, array.length - 1);
-		System.out.println(Arrays.toString(array));
+		System.out.println(Arrays.toString(ARRAY_TEST));
+		quickSort(ARRAY_TEST, 0, ARRAY_TEST.length - 1);
+		System.out.println(Arrays.toString(ARRAY_TEST));
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class SortTest {
 	 * @param startIndex　开始指针
 	 * @param endIndex　结束指针
 	 */
-	private static void quickSort(int[] array, int startIndex, int endIndex) {
+	public static void quickSort(int[] array, int startIndex, int endIndex) {
 		if(startIndex >= endIndex) {
 			//递归结束点：　当左右相等或者左大于右时结束函数
 			//System.out.println("End same startIndex = " + startIndex + ", endIndex= " + endIndex);
