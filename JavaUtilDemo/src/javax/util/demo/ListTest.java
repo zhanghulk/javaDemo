@@ -2,30 +2,29 @@
 package javax.util.demo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ListTest {
 
     public static void main(String[] args) {
-        List<String> l = new ArrayList<>();
+        List<String> l = new ArrayList<>(4);
         l.add("aa");
         l.add("bb");
         l.add("cc");
         l.add("dd");
         System.out.println(l);
+        l.add(2, "ee");//插入一个元素，后面的自动依次后移
         Object[] lArr = l.toArray();
-        for (Object object : lArr) {
-            System.out.println(object);
-        }
+        printlnArr(lArr);
         System.out.println("=============================================");
         String[] newArr = new String[l.size() + 2];
         String[] lArr1 = l.toArray(newArr);
-        for (Object object : lArr1) {
-            System.out.println(object);
-        }
+        printlnArr(lArr1);
         System.out.println("=================---------------===========================");
-        for (Object object : newArr) {
-            System.out.println(object);
-        }
+    }
+    
+    static void printlnArr(Object[] arr) {
+    	System.out.println(Arrays.toString(arr));
     }
 }
