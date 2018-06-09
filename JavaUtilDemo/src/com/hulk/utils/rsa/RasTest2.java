@@ -6,8 +6,16 @@ import java.util.Base64;
 import java.util.HashMap;
 
 /**
- * 明文最长不超过 117 bytes
- * @author hulk
+ * RAS用来加密机密数据:密码/转账资金等等，数据不能呢个太大，否则会非常耗费资源.
+ * 一般随机生成公钥和私钥，用户只需要保存好对应的密钥对，不用关心密码到底是什么.
+ * 注：公钥私钥是成对出现的，通常公钥加密，私钥解密，但是，也可以私钥加密，公钥解密，可用于证书签名验证.
+ * RAS非对唱加密Java实现：
+ * 1．采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
+ * 2. 不采用分组加密，直接整个元数据加密的话，每次最多加 117 bytes, 否则：
+ * javax.crypto.IllegalBlockSizeException: Data must not be longer than 117 bytes
+ * 
+ * 参考：　https://blog.csdn.net/centralperk/article/details/8558678
+ * @author hulk 2018-06-09
  *
  */
 public class RasTest2 {

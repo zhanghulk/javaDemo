@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 /**
  * RAS用来加密机密数据:密码/转账资金等等，数据不能呢个太大，否则会非常耗费资源.
  * 一般随机生成公钥和私钥，用户只需要保存好对应的密钥对，不用关心密码到底是什么.
- * 注：公钥私钥是成对出现的，通常公钥加密，私钥解密，但是，也可以私钥加密，公钥解密，　可用于证书签名验证，
+ * 注：公钥私钥是成对出现的，通常公钥加密，私钥解密，但是，也可以私钥加密，公钥解密，　可用于证书签名验证，　　签发证书之人用私钥签名，其他人用公钥也可以解密验证
  * RAS非对唱加密Java实现：
  * 1．采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
  * 2. 不采用分组加密，直接整个元数据加密的话，每次最多加 117 bytes, 否则：
@@ -27,64 +27,8 @@ import javax.crypto.Cipher;
  * @author hulk 2018-06-09
  *
  */
-public class JRSAUtils {
+public class RSAUtils3 {
 
-	public static void main(String[] args) {
-		try {
-			testRsa();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * 加解密测试２
-	 * 采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
-	 * @throws Exception
-	 */
-	static void testRsa() throws Exception {
-		// TODO Auto-generated method stub
-		//生成公钥和私钥 (也就是随机生成的密码)
-        HashMap<String, Object> map = getKeys();  
-        RSAPublicKey publicKey = (RSAPublicKey) map.get("public");  
-        RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");  
-          
-        //模  
-        String modulus = publicKey.getModulus().toString();  
-        System.out.println("modulus: " + modulus);
-        //公钥指数  
-        String public_exponent = publicKey.getPublicExponent().toString(); 
-        System.out.println("public_exponent: " + public_exponent);
-        //私钥指数  
-        String private_exponent = privateKey.getPrivateExponent().toString(); 
-        System.out.println("private_exponent: " + private_exponent);
-        //明文  
-        String plainText = "zhanghao 123456789 "
-        		+ "5133626B717667424D45675047434C4E6"
-        		+ "E497A62576778474C72554878573161377"
-        		+ "730777456654D687349474E4A5A4448347"
-        		+ "8737841764E51552B7A3671314E6347686"
-        		+ "E53482F765677683772466C7A3550763430"
-        		+ "6A644A69662F5044713679516A3657684659"
-        		+ "47514444424B6A47323052684E454B5A6A487"
-        		+ "2336B58616D3073476A2F2F414A645153326F"
-        		+ "35525958644E674C51485A646E4D684D585458"
-        		+ "424A6F6461574A77416A71553D";  
-        //使用模和指数生成公钥和私钥  
-        RSAPublicKey pubKey = getPublicKey(modulus, public_exponent);  
-        RSAPrivateKey priKey = getPrivateKey(modulus, private_exponent);  
-        //加密后的密文 : 下面采用分组加密的方式，明文可以比较长
-        String encrypted = encryptByPublicKey(plainText, pubKey);
-        encrypted = Base64.getEncoder().encodeToString(encrypted.getBytes());
-        System.err.println("encrypted hex str:\n" + encrypted);  
-        
-        //通过网络等等传到客户端/服务端.............
-        encrypted = new String(Base64.getDecoder().decode(encrypted));
-        //解密后的明文  
-        plainText = decryptByPrivateKey(encrypted, priKey);
-        System.out.println("plainText:\n" + plainText);
-	}
-	
 	/**
 	 * 生成公钥和私钥
 	 * 可以理解为随机生成密码，用户只需要保存好对应的密钥对，不用关心密码到底是什么.
@@ -152,18 +96,18 @@ public class JRSAUtils {
 	}
 
 	/**
-	 * 公钥加密
+	 * 私钥加密
 	 * 注：采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
 	 * @param plainText 明文字符串
-	 * @param publicKey　公钥
+	 * @param privateKey　私钥
 	 * @return
 	 * @throws Exception
 	 */
-	public static String encryptByPublicKey(String plainText, RSAPublicKey publicKey) throws Exception {
+	public static String encryptByPublicKey(String plainText, RSAPrivateKey privateKey) throws Exception {
 		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 		// 模长
-		int key_len = publicKey.getModulus().bitLength() / 8;
+		int key_len = privateKey.getModulus().bitLength() / 8;
 		// 加密数据长度 <= 模长-11
 		String[] array = splitAsStringArray(plainText, key_len - 11);
 		System.out.println("encrypt key_len= " + key_len + ", plainText arrays= " + array.length);
@@ -178,17 +122,17 @@ public class JRSAUtils {
 	}
 	
 	/**
-	 * 私钥解密
+	 * 公钥解密
 	 * @param encryptedText 密文字符串(十六进制的刻度字符串)
-	 * @param privateKey
+	 * @param publicKey　公钥
 	 * @return
 	 * @throws Exception
 	 */
-	public static String decryptByPrivateKey(String encryptedText, RSAPrivateKey privateKey) throws Exception {
+	public static String decryptByPrivateKey(String encryptedText, RSAPublicKey publicKey) throws Exception {
 		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+		cipher.init(Cipher.DECRYPT_MODE, publicKey);
 		// 模长
-		int key_len = privateKey.getModulus().bitLength() / 8;
+		int key_len = publicKey.getModulus().bitLength() / 8;
 		//十六进制的字符串转化为对应的byte数组
 		//绝对不能直接encryptedText.getBytes()
 		byte[] bytes = str2ByteArray(encryptedText);
