@@ -1,4 +1,4 @@
-package com.hulk.util.common;
+package com.hulk.utils.aes;
 
 import java.security.SecureRandom;
 
@@ -18,7 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
  * Created by zhanghao on 18-3-19.
  */
 
-public class JAesUtil {
+public class AesUtils {
     public final static String TAG = "AesCommonUtil";
 
 	public static final String CHARSET = "UTF-8";
@@ -26,6 +26,9 @@ public class JAesUtil {
 	private static final String AES = "AES";//AES 加密
     //AES是加密方式/CBC是工作模式/PKCS5Padding是填充模式
 	private static final String CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
+	
+	//二进制转换为16进制的字符集
+  	private static final  String HEX = "0123456789ABCDEF";
 
     //加密aes密钥,必须时16个byte,否则无效,因为美国对软件出口的控制,需要重新下载其jar替换
 	// https://blog.csdn.net/wangjunjun2008/article/details/50847426
@@ -170,7 +173,7 @@ public class JAesUtil {
 
     /**
      * 16进制字符串转字节数组
-     *
+     * 注：一个byte可以存放两个英文字符
      * @param s
      * @return
      */
@@ -260,5 +263,44 @@ public class JAesUtil {
             log("generateData: " + e, e);
         }
         return null;
+    }
+    
+    /*
+     * 生成随机数，可以当做动态的密钥 加密和解密的密钥必须一致，不然将不能解密
+     */
+    public static String generateKey() {
+        try {
+            SecureRandom localSecureRandom = SecureRandom.getInstance(SHA1PRNG);
+            byte[] bytes_key = new byte[20];
+            localSecureRandom.nextBytes(bytes_key);
+            String str_key = toHex(bytes_key);
+            return str_key;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * 二进制转换为16进制的字符集
+     */
+    public static String toHex(byte[] buf) {
+        if (buf == null)
+            return "";
+        StringBuffer result = new StringBuffer(2 * buf.length);
+        for (int i = 0; i < buf.length; i++) {
+            appendHex(result, buf[i]);
+        }
+        return result.toString();
+    }
+
+    /**
+     * 取高四位的16进制字符和低四位的16进制字符拼接起来
+     * @param sb
+     * @param b
+     */
+    private static void appendHex(StringBuffer sb, byte b) {
+    	//取高四位的16进制字符和低四位的16进制字符拼接起来
+        sb.append(HEX.charAt((b >> 4) & 0x0f)).append(HEX.charAt(b & 0x0f));
     }
 }
