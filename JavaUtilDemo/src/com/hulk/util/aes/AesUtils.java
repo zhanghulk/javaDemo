@@ -1,4 +1,4 @@
-package com.hulk.utils.aes;
+package com.hulk.util.aes;
 
 import java.security.SecureRandom;
 

@@ -1,14 +1,19 @@
-package com.hulk.utils.rsa;
+package com.hulk.util.rsa;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -17,7 +22,7 @@ import javax.crypto.Cipher;
 /**
  * RAS用来加密机密数据:密码/转账资金等等，数据不能太大，否则会非常耗费资源.
  * 一般随机生成公钥和私钥，用户只需要保存好对应的密钥对，不用关心密码到底是什么.
- * 注：公钥私钥是成对出现的，通常公钥加密，私钥解密，但是，也可以私钥加密，公钥解密，　可用于证书签名验证，　　签发证书之人用私钥签名，其他人用公钥也可以解密验证
+ * 注：公钥私钥是成对出现的，通常公钥加密，私钥解密，但是，也可以私钥加密，公钥解密，　可用于证书签名验证，
  * RAS非对唱加密Java实现：
  * 1．采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
  * 2. 不采用分组加密，直接整个元数据加密的话，每次最多加 117 bytes, 否则：
@@ -27,15 +32,16 @@ import javax.crypto.Cipher;
  * @author hulk 2018-06-09
  *
  */
-public class RSAUtils3 {
+public class RSAUtils {
 
 	/**
 	 * 生成公钥和私钥
 	 * 可以理解为随机生成密码，用户只需要保存好对应的密钥对，不用关心密码到底是什么.
+	 * @param keyLength 密钥长度，小于1024长度的密钥已经被证实是不安全的，通常设置为1024或者2048，建议2048
 	 * @throws NoSuchAlgorithmException
 	 * 
 	 */
-	public static HashMap<String, Object> getKeys() throws NoSuchAlgorithmException {
+	public static HashMap<String, Object> getKeys(int keyLength) throws NoSuchAlgorithmException {
 		HashMap<String, Object> meys = new HashMap<String, Object>();
 		KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
 		keyPairGen.initialize(1024);
@@ -45,6 +51,46 @@ public class RSAUtils3 {
 		meys.put("public", publicKey);
 		meys.put("private", privateKey);
 		return meys;
+	}
+	
+	/**
+	 * X509解析，将字符串形式的公钥转换为公钥对象
+	 * @param publicKeyStr 公钥字符串
+	 * @return
+	 */
+	public static RSAPublicKey keyStrToPublicKey(String publicKeyStr) {
+		RSAPublicKey publicKey = null;
+		byte[] keyBytes = Base64.getDecoder().decode(publicKeyStr);
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			publicKey = (RSAPublicKey) keyFactory.generatePublic(keySpec);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+		return publicKey;
+	}
+
+	/**
+	 * X509解析，将字符串形式的私钥，转换为私钥对象
+	 * @param privateKeyStr s私钥字符串
+	 * @return
+	 */
+	public static RSAPrivateKey keyStrToPrivate(String privateKeyStr) {
+		RSAPrivateKey privateKey = null;
+		byte[] keyBytes = Base64.getDecoder().decode(privateKeyStr.getBytes());
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+		return privateKey;
 	}
 
 	/**
@@ -96,18 +142,18 @@ public class RSAUtils3 {
 	}
 
 	/**
-	 * 私钥加密
+	 * 公钥加密
 	 * 注：采用分组加密的方式，明文可以比较长，理论上无线长，但是太耗费时间
 	 * @param plainText 明文字符串
-	 * @param privateKey　私钥
+	 * @param publicKey　公钥
 	 * @return
 	 * @throws Exception
 	 */
-	public static String encryptByPublicKey(String plainText, RSAPrivateKey privateKey) throws Exception {
+	public static String encryptByPublicKey(String plainText, RSAPublicKey publicKey) throws Exception {
 		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 		// 模长
-		int key_len = privateKey.getModulus().bitLength() / 8;
+		int key_len = publicKey.getModulus().bitLength() / 8;
 		// 加密数据长度 <= 模长-11
 		String[] array = splitAsStringArray(plainText, key_len - 11);
 		System.out.println("encrypt key_len= " + key_len + ", plainText arrays= " + array.length);
@@ -122,17 +168,17 @@ public class RSAUtils3 {
 	}
 	
 	/**
-	 * 公钥解密
+	 * 私钥解密
 	 * @param encryptedText 密文字符串(十六进制的刻度字符串)
-	 * @param publicKey　公钥
+	 * @param privateKey
 	 * @return
 	 * @throws Exception
 	 */
-	public static String decryptByPrivateKey(String encryptedText, RSAPublicKey publicKey) throws Exception {
+	public static String decryptByPrivateKey(String encryptedText, RSAPrivateKey privateKey) throws Exception {
 		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.DECRYPT_MODE, publicKey);
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		// 模长
-		int key_len = publicKey.getModulus().bitLength() / 8;
+		int key_len = privateKey.getModulus().bitLength() / 8;
 		//十六进制的字符串转化为对应的byte数组
 		//绝对不能直接encryptedText.getBytes()
 		byte[] bytes = str2ByteArray(encryptedText);

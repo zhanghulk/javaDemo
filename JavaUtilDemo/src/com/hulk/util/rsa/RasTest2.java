@@ -1,4 +1,4 @@
-package com.hulk.utils.rsa;
+package com.hulk.util.rsa;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -36,7 +36,7 @@ public class RasTest2 {
 	static void testRsa2() throws Exception {
 		// TODO Auto-generated method stub
 		//生成公钥和私钥 (也就是随机生成的密码)
-        HashMap<String, Object> map = RSAUtils.getKeys();  
+        HashMap<String, Object> map = RSAUtils.getKeys(1024);  
         RSAPublicKey publicKey = (RSAPublicKey) map.get("public");  
         RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");  
           
