@@ -59,17 +59,7 @@ public class JRSAUtils {
         String private_exponent = privateKey.getPrivateExponent().toString(); 
         System.out.println("private_exponent: " + private_exponent);
         //明文  
-        String plainText = "zhanghao 123456789 "
-        		+ "5133626B717667424D45675047434C4E6"
-        		+ "E497A62576778474C72554878573161377"
-        		+ "730777456654D687349474E4A5A4448347"
-        		+ "8737841764E51552B7A3671314E6347686"
-        		+ "E53482F765677683772466C7A3550763430"
-        		+ "6A644A69662F5044713679516A3657684659"
-        		+ "47514444424B6A47323052684E454B5A6A487"
-        		+ "2336B58616D3073476A2F2F414A645153326F"
-        		+ "35525958644E674C51485A646E4D684D585458"
-        		+ "424A6F6461574A77416A71553D";  
+        String plainText = "zhanghao 123456789 hehehe";  
         //使用模和指数生成公钥和私钥  
         RSAPublicKey pubKey = getPublicKey(modulus, public_exponent);  
         RSAPrivateKey priKey = getPrivateKey(modulus, private_exponent);  
